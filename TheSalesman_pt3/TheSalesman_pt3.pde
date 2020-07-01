@@ -75,7 +75,7 @@ String[] toBeContinued =
 String[] codeClue0 =
 {
  "   public void pickRootBeerStein() {",
- "       int stein; numOfSteins = 3;",
+ "       int stein; int numOfSteins = 3;",
  "",
  "       for( stein = 2; stein < numOfSteins; stein++ ) { }",
  "       addPoison( stein );",
@@ -93,7 +93,7 @@ String[] codeClue0 =
 String[] codeClue1 =
 {
  "   public void pickRootBeerStein() {",
- "       int stein; numOfSteins = 3;",
+ "       int stein; int numOfSteins = 3;",
  "",
  "       for( stein = 2; stein < numOfSteins; stein++ ) { }",
  "       addPoison( stein );",

@@ -1,4 +1,4 @@
-int codingLevel = 3;
+int codingLevel = 1;
 
 PFont papyrusTitle;
 PFont papyrus;
@@ -31,6 +31,7 @@ PImage purplePotionBig;
 PImage deathPotionBig;
 PImage mixedPotionBig;
 PImage emptyPotion;
+PImage handCursor;
 
 class Button {
   String label;
@@ -327,6 +328,9 @@ void setup() {
   
   emptyPotion = loadImage( "emptyPotion.png" );
   emptyPotion.resize(300, 450);
+  
+  handCursor = loadImage( "handCursor.png" );
+  handCursor.resize(75,75);
 
   red = new Potion( redPotion, 500, 440 );
   purple = new Potion( purplePotion, 710, 340 );
@@ -453,6 +457,9 @@ void draw() {
       noStroke();
       rect(1070, 960, 170, -(mixed.size() * 20), 20, 20, 60, 60);
     }
+    
+    noCursor();
+    image(handCursor, mouseX-20, mouseY-20);
   }
 
   if ( showMessage ) {
@@ -696,7 +703,8 @@ void mousePressed() {
       font = codeFont;
       step++;
     } else if ( step == 3 ){
-      if( potionCreated ) {  
+      if( potionCreated ) {
+        cursor(ARROW);
         visited.clear();
         resetPotions( true );
         visited.add( new Visited( mixedPotion, null, 550, 50 ) );

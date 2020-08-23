@@ -1,5 +1,5 @@
 // Set these parameters to make the challenge easier/harder
-float maxTimeSec = 2 * 60.0;  // Make time to answer questions
+float maxTimeSec = 2 * 60.0;  // Time to answer questions
 float alatarAnswerRate = 4;   // Answer per second
 float erhdadAnswerRate = 9;   // Answer per second
 
@@ -24,6 +24,7 @@ PImage handCursor;
 PImage cell;
 PImage anielTravel;
 PImage council;
+PImage castleGate;
 PImage label;
 PImage label2;
 PImage label3;
@@ -238,6 +239,9 @@ void setup() {
   
   council = loadImage( "council.jpg" );
   council.resize( width, height );
+  
+  castleGate = loadImage( "castleGate2.jpg" );
+  castleGate.resize( width, height );
   
   label = loadImage( "label.png" );
   label2 = loadImage( "label2.png" );
@@ -466,7 +470,11 @@ void draw() {
   } else if ( step == 5 || step == 6 || step == 7 ) {
     background( council );
   } else if ( step == 20 ) {
-    background( cell ); 
+    if( testFailed ){
+      background( castleGate );
+    } else {
+      background( cell );
+    }
   }
 
   for ( Visited loc : visited ) {
@@ -532,6 +540,7 @@ void draw() {
     if( timeRemainingSec == 0 ){
       testFailed = true;
       timer.stop();
+      progressGame();
     }
     
     if( timeRemainingSec > 0 && (int)timeRemainingSec != currentSecond ){
@@ -585,7 +594,7 @@ void draw() {
     drawMessage( message, font );
   }
   
-  if( step == 8 ){
+  if( step == 10 ){
     for ( Visited loc : visited ) {
       if ( loc.p == ring ) {
         filter( BLUR, 6 );
@@ -614,7 +623,39 @@ boolean testPassed = false;
 boolean testWin = false;
 
 void mousePressed() {
-  if (mouseButton == LEFT) {    
+  if (mouseButton == LEFT) {
+    
+    progressGame();
+    
+  } else if( mouseButton == RIGHT && step == 6 ){
+     Question q = qArr[ currQuestionIndex ];
+     Button[] buttons = q.answers;
+     
+     for( int i = 0; i < buttons.length; i++ ){
+        if( buttons[ i ].mouseIsOver() ){
+          if( i == q.correctButton ){
+            progThief.update();
+            
+            if( progThief.isFull() ){
+              testPassed = true;
+              
+              print( "p1: " + !progPerson1.isFull() );
+              print( "p2: " + !progPerson2.isFull() );
+              
+              if( !progPerson1.isFull() && !progPerson2.isFull() ){
+                testWin = true;
+                progressGame();
+              }
+            }
+          }
+          
+          currQuestionIndex = ++currQuestionIndex % qArr.length;
+        }
+     }
+  }
+}
+
+public void progressGame(){
     if ( step == 0 ) {
       showMessage = true;
       message = intro2;
@@ -703,29 +744,4 @@ void mousePressed() {
     }
     
     println( "step = " + step );
-  } else if( mouseButton == RIGHT && step == 6 ){
-     Question q = qArr[ currQuestionIndex ];
-     Button[] buttons = q.answers;
-     
-     for( int i = 0; i < buttons.length; i++ ){
-        if( buttons[ i ].mouseIsOver() ){
-          if( i == q.correctButton ){
-            progThief.update();
-            
-            if( progThief.isFull() ){
-              testPassed = true;
-              
-              print( "p1: " + !progPerson1.isFull() );
-              print( "p2: " + !progPerson2.isFull() );
-              
-              if( !progPerson1.isFull() && !progPerson2.isFull() ){
-                testWin = true;
-              }
-            }
-          }
-          
-          currQuestionIndex = ++currQuestionIndex % qArr.length;
-        }
-     }
-  }
 }

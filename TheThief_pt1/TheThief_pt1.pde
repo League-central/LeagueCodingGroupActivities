@@ -33,6 +33,8 @@ PImage mixedPotionBig;
 PImage emptyPotion;
 PImage handCursor;
 
+Pixelate chapterPx = null;
+
 class Button {
   String label;
   float x;    // top left corner x position
@@ -202,7 +204,7 @@ String[] codeClue5 = codeClue3;
 String[][] codeClues = { codeClue0, codeClue1, codeClue2, codeClue3, codeClue4, codeClue5 };
 
 ArrayList<Visited> visited = new ArrayList<Visited>(); 
-int step = 0;
+int step = -1;
 String[] message;
 PFont font;
 boolean showMessage;
@@ -400,13 +402,18 @@ void drawMessage( String[] message, PFont font ) {
 
 void draw() {
 
-  if ( step < 1 ) {
+  if ( step < 0 ) {
     background( galinor );
     fill( 0 );
     textFont( papyrusTitle );
     text( "The Thief of Galinor:", 125, 250 );
-    text( "Chapter I", 450, 550 );
-  } else if ( step == 1 ) {
+  } else if ( step == 0 ) {
+    background( galinor );
+    fill( 0 );
+    textFont( papyrusTitle );
+    text( "The Thief of Galinor:", 125, 250 );
+    chapterPx.drawPixels();
+  } else if( step == 1 ){
     background( market );
   } else if ( step >= 2 && step <= 4 ) {
     background( apothacary );
@@ -636,6 +643,19 @@ boolean checkPotionMixed(){
   return true;
 }
 
+// Kill pixels that are in range
+void mouseDragged() {
+  if (mouseButton == RIGHT) {
+    if ( step == 0 && chapterPx != null ) {
+      for (Particle particle : chapterPx.getParticles() ) {
+        if (dist(particle.pos.x, particle.pos.y, mouseX, mouseY) < 50) {
+          particle.kill();
+        }
+      }
+    }
+  }
+}
+
 ArrayList<Button> buttons = new ArrayList<Button>();
 Button buttonAdd = new Button("add", 120, 550, 90, 40);
 Button buttonBoil = new Button("boil", 210, 550, 90, 40);
@@ -685,8 +705,13 @@ void mousePressed() {
       }
     
   } else if (mouseButton == LEFT) {
-    if ( step == 0 ) {
+    if ( step == -1 ) {
       showMessage = false;
+      chapterPx = new Pixelate( "Chapter I", papyrusTitle, 650, 450 );
+      step++;
+    } else if ( step == 0 ) {
+      showMessage = false;
+      chapterPx = new Pixelate( "Chapter I", papyrusTitle, 650, 450 );
       message = intro2;
       font = papyrus;
       step++;
@@ -737,5 +762,7 @@ void mousePressed() {
       visited.add( new Visited( ring, null, 400, 200 ) );
       step++;
     }
+    
+    println( step );
   }
 }

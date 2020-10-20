@@ -1,7 +1,8 @@
 // Set these parameters to make the challenge easier/harder
-float maxTimeSec = 2 * 60.0;  // Time to answer questions
-float alatarAnswerRate = 4;   // Answer per second
-float erhdadAnswerRate = 9;   // Answer per second
+float maxTimeSec = 3 * 60.0;  // Time to answer questions
+float alatarAnswerRate = 8;   // Answer per second
+float erhdadAnswerRate = 16;   // Answer per second
+int codingLevel = 0;
 
 PFont papyrusTitle;
 PFont papyrus;
@@ -156,7 +157,7 @@ String[] toBeContinued =
 };
 
 ArrayList<Visited> visited = new ArrayList<Visited>(); 
-int step = 0;
+int step = -1;
 String[] message;
 PFont font;
 boolean showMessage;
@@ -164,6 +165,7 @@ boolean addTwoOptions = false;
 boolean pathFound = false;
 int currentSecond = 0;
 boolean testFailed = false;
+Pixelate chapterPx = null;
 
 enum PATHS { 
   LEFT, RIGHT
@@ -265,13 +267,37 @@ String WizardStaff =
  "        this.owner = owner;\n" +
  "    }\n" +
  "}";
- 
+
+String Gandalf0 =
+ "int GimliMagicPower = 1;\n" +
+ "int LegolasMagicPower = 20;\n" +
+ "int AragornMagicPower = 10;\n" +
+ "int GandalfMagicPower = 100;\n";
+
+String Gimli0 =
+ "int GimliStrength = 40;\n" +
+ "int LegolasStrength = 10;\n" +
+ "int AragornStrength = 30;\n" +
+ "int GandalfStrength = 1;\n";
+
+String Aragorn0 =
+ "int GimliSpeed = 5;\n" +
+ "int LegolasSpeed = 30;\n" +
+ "int AragornSpeed = 20;\n" +
+ "int GandalfSpeed = 1;\n";
+
 String Aragorn =
  "public class Ranger {\n" +
  "    void fight(){}\n" +
  "}\n" +
  "Ranger Aragorn = new Ranger();";
- 
+
+String Legolas0 =
+ "int GimliAgility = 10;\n" +
+ "int LegolasAgility = 40;\n" +
+ "int AragornAgility = 25;\n" +
+ "int GandalfAgility = 2;\n";
+
 String Legolas =
  "public class Elf {\n" +
  "    void shootBow(){}\n" +
@@ -284,11 +310,25 @@ String Gimli =
  "}\n" +
  "Dwarf Gimli = new Dwarf();";
 
+String Sam0 =
+ "if( 10 > 11 ){\n" +
+ "    doNotHelpFrodo();\n" +
+ "} else {\n" +
+ "    helpFrodo();\n" +
+ "}\n";
+
 String Sam =
  "public class Hobbit {\n" +
  "    void helpFrodo(){}\n" +
  "}\n" +
  "Hobbit Sam = new Hobbit();";
+
+String Gollum0 =
+ "public void GollumUpdate()\n" +
+ "    if( hourOfDay == 6 ) {\n" +
+ "        stealRing();\n" +
+ "    }\n" +
+ "}\n";
 
 String Gollum =
  "public class Hobbit {\n" +
@@ -296,11 +336,25 @@ String Gollum =
  "}\n" +
  "Hobbit Gollum = new Hobbit();";
  
+String Sauron0 =
+ "public void forgeRing {\n" +
+ "    for( int hours = 0; hours < 100; hours++ ){\n" +
+ "        build();\n" +
+ "    }\n" +
+ "}\n";
+ 
 String Sauron =
  "public class DarkLord {\n" +
  "    void forgeRing(){}\n" +
  "}\n" +
  "DarkLord Sauron = new DarkLord();";
+
+String returnValQ1_0 =
+ "_____ axePower = getAxePower();\n" +
+ "\n" +
+ "public int getAxePower() {\n" +
+ "    return GimliPower + 80;\n" +
+ "}";
 
 String returnValQ1 =
  "_____ weapon = createDwarfWeapon();\n" +
@@ -308,7 +362,14 @@ String returnValQ1 =
  "public Axe createDwarfWeapon() {\n" +
  "    // create weapon\n" +
  "}";
- 
+
+String returnValQ2_0 =
+ "_____ orcLeader = getOrcLeader();\n" +
+ "\n" +
+ "public String getOrcLeader() {\n" +
+ "    return \"Uglúk\"\n" +
+ "}";
+
 String returnValQ2 =
  "_____ chiefOrc = new Orc(\"Uglúk\");\n" +
  "\n" +
@@ -316,8 +377,23 @@ String returnValQ2 =
  "    // create orc\n" +
  "}";
 
+String ifStatements0 =
+ "if( true ){\n" +
+ "    health = 950;\n" +
+ "} else {\n" +
+ "    health = 500\n" +
+ "}\n";
+
 String ifStatements1 =
  "if( true && false ){\n" +
+ "    health = 950;\n" +
+ "} else {\n" +
+ "    health = 500\n" +
+ "}\n" +
+ "health = health - 50;";
+
+String ifStatements2_0 =
+ "if( false ){\n" +
  "    health = 950;\n" +
  "} else {\n" +
  "    health = 500\n" +
@@ -332,7 +408,29 @@ String ifStatements2 =
  "}\n" +
  "health = health - 50;";
 
-String[][] javaQuestions =
+String[][] javaQuestionsLevel0 =
+{
+  { "What value is Aragorn's speed?!\n" + Aragorn0, "2", "5", "25", "20" },
+  { "What is the value of health after the code runs?\n" + "int health;\n" + ifStatements0, "1", "900", "950", "500" },
+  { "What value is Gimli's strength?!\n" + Gimli0, "1", "5", "40", "25" },
+  { "How long does it take to forge a ring of power!\n" + Sauron0, "0", "100 hours", "99 hours", "101 hours" },
+  { "What code should be placed in the ______?\n" + returnValQ1_0, "2", "void", "80", "int" },
+  { "At what time does Gollum steal the ring?\n"+ Gollum0, "1", "12", "6", "Gollum doesn't steal!" },
+  { "What is the value of k?\nint k = 10;\nk--;\nk += 5;\nk = 20;", "2", "14", "34", "20" },
+  { "What value is Legolas' agility?!\n" + Legolas0, "0", "40", "2", "25;" },
+  { "What code should be placed in the ______?\n" + returnValQ2_0, "1", "Orc", "String", "\"Uglúk\"" },
+  { "What does this method need to return?\nint callEnts(String message){ }", "2", "callEnts", "String", "int" },
+  { "What is returned by calvary.charAt(2) for:\nString calvary = \"Minas Morgul\";", "0", "n", "i", "a" },
+  { "What is the value of k?\nint k = 10;\nk++;\nk -= 5;", "1", "5", "6", "7" },
+  { "Will Sam help Frodo?\n" + Sam0, "1", "No", "Yes", "I don't know!" },
+  { "Which is NOT a valid variable type?", "2", "int", "double", "5" },
+  { "What is Gandalf's magic power?\n\n" + Gandalf0, "0", "100", "1", "10" },
+  { "What is the value of health after the code runs?\n" + "int health;\n" + ifStatements2_0, "1", "900", "450", "500" },
+  { "What variable is used to hold a single letter", "2", "int", "double", "char" },
+  { "What is the name of the first method that is\nexecuted when a program runs?", "2", "run()", "runner()", "main()" },
+};
+
+String[][] javaQuestionsLevel2 =
 {
   { "Make Aragorn fight!\n" + Aragorn, "2", "fight()", "fight(Aragorn);", "Aragorn.fight();" },
   { "Make a new ElvenScabbard given the following:\n\n" + elvenScabbard, "0", "new ElvenScabbard(10.0)", "new ElvenScabbard(false)", "new ElvenScabbard(\"10.0\")" },
@@ -359,6 +457,7 @@ String[][] javaQuestions =
 };
 
 Question[] qArr;
+Question exampleQ;
 int currQuestionIndex = 0;
 
 class Question {
@@ -402,7 +501,15 @@ class Question {
   }
 }
 
+String[][] javaQuestions;
 public void setupQuestions(){
+  
+  if( codingLevel < 2 ){
+    javaQuestions = javaQuestionsLevel0; 
+  } else {
+    javaQuestions = javaQuestionsLevel2;
+  }
+  
   qArr = new Question[ javaQuestions.length ];
   
   for( int i = 0; i < qArr.length; i++ ){
@@ -452,13 +559,17 @@ void drawMessage( String[] message, PFont font ) {
 }
 
 void draw() {
-
-  if ( step < 1 ) {
+  if ( step == -1 ) {
     background( galinor );
     fill( 0 );
     textFont( papyrusTitle );
     text( "The Thief of Galinor:", 125, 250 );
-    text( "Chapter II", 450, 550 );
+  } else if ( step == 0 ) {
+    background( galinor );
+    fill( 0 );
+    textFont( papyrusTitle );
+    text( "The Thief of Galinor:", 125, 250 );
+    chapterPx.drawPixels();
   } else if ( step == 1 ) {
     background( snowMarket );
   } else if( step == 2 ) {
@@ -519,11 +630,15 @@ void draw() {
   // Step 5: Display start button
   if( start != null && step == 5 ){
     textFont( papyrus );
-    start.display(); 
+    start.display();
     fill(0);
     textFont( codeFontMedium );
-    text( "Answer 10 questions within\n    " + maxTimeSec + " seconds to pass", width/2 - 180, 440 );
-    text( "Maximum of 20 questions", width/2 - 180, 570 );
+    text( "Answer 10 questions within\n    " + maxTimeSec + " seconds to pass", width/2 - 180, 540 );
+    text( "Maximum of 20 questions", width/2 - 180, 670 );
+    
+    if( exampleQ != null ){
+      exampleQ.draw();
+    }
   }
   
   // Step 6: Display progress bars and questions
@@ -656,7 +771,11 @@ void mousePressed() {
 }
 
 public void progressGame(){
-    if ( step == 0 ) {
+    if( step == -1 ){
+      showMessage = false;
+      chapterPx = new Pixelate( "Chapter II", papyrusTitle, 650, 450 );
+      step++;
+    } else if ( step == 0 ) {
       showMessage = true;
       message = intro2;
       font = papyrus;
@@ -697,9 +816,11 @@ public void progressGame(){
       message = null;
       
       if( start == null ) {
-        start = new Button("START", (width/2) - 250, (height/2) - 100, 500, 200);
+        exampleQ = new Question( new String[]{"This is an example question.", "0", "A", "B", "C"});
+        start = new Button("START", (width/2) - 250, (height/2), 500, 200);
         setupQuestions();
       } else if( start.mouseIsOver() && timer == null ){
+        exampleQ = null;
         progThief =   new ProgressBar(400, 575, 900, 100, #8FDE80);
         progPerson1 = new ProgressBar(400, 700, 900, 100, #0030FF);
         progPerson2 = new ProgressBar(400, 825, 900, 100, 0);
